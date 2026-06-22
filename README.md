@@ -1,12 +1,12 @@
 TechStore API
 
-A full-featured e-commerce REST API built with ASP.NET Core 8.0 following Onion Architecture principles. Supports product management, shopping cart, order processing, Stripe payments, coupon system, wishlists, reviews, and more.
+A full-featured e-commerce REST API built with ASP.NET Core 8.0 following 3-layird Architecture principles. Supports product management, shopping cart, order processing, Stripe payments, coupon system, wishlists, reviews, and more.
 
 
 🏗️ Architecture
 
 
-Onion Architecture — API, BLL, DAL, Domain layers fully separated
+3-layird Architecture — API, BLL, DAL, Domain layers fully separated
 Repository Pattern with Unit of Work
 Result/Error pattern for consistent, predictable error handling
 JWT Authentication with refresh token rotation
