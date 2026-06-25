@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using TechStore.BLL.Interfaces;
 using TechStore.DAL.Extensions;
-using TechStore.DAL.UnitOfWork;
 using TechStore.Domain.DTOs.Auth;
 using TechStore.Domain.Entities;
 using TechStore.Domain.Enums;
+using TechStore.DAL.UnitOfWork;
+using TechStore.BLL.Interfaces;
 
 namespace TechStore.BLL.Auth;
 
@@ -53,12 +53,12 @@ public class AuthService : IAuthService
     {
         // Check if user already exists
         var existingUser = await _userManager.Users
-            .FirstOrDefaultAsync(u => u.Email == request.Email ||
+            .FirstOrDefaultAsync(u => u.Email == request.Email || 
                                      u.PhoneNumber == request.PhoneNumber);
-
+        
         if (existingUser is not null)
             return Error.Validation("User.AlreadyExists", "User with this email or phone number already exists.");
-
+        
         var user = new ApplicationUser
         {
             UserName = request.Username, // Identity requires usernames without spaces. Email is safe.
@@ -96,17 +96,17 @@ public class AuthService : IAuthService
             RefreshToken = refreshToken,
         };
     }
-
+    
     public async Task<Result<TokenResponseDTO>> RefreshTokenAsync(RefreshTokenRequestDto request)
     {
         var userId = await _refreshTokenService.GetUserIdFromValidRefreshTokenAsync(request.RefreshToken);
         if (userId is null)
             return Error.InvalidCredentials("User.InvalidCredentials", "Refresh Token Is Invalid");
-
+            
         var user = await _userManager.FindByIdAsync(userId);
         if (user is null)
             return Error.InvalidCredentials("User.InvalidCredentials");
-
+            
         await _refreshTokenService.RevokeRefreshTokenAsync(request.RefreshToken);
         var newAccessToken = await _jwtService.GenerateTokenAsync(user);
         var newRefreshToken = await _refreshTokenService.GenerateRefreshTokenAsync(user.Id);
@@ -117,13 +117,13 @@ public class AuthService : IAuthService
             RefreshToken = newRefreshToken
         };
     }
-
+    
     public async Task<Result> LogoutAsync(RefreshTokenRequestDto request)
     {
         await _refreshTokenService.RevokeRefreshTokenAsync(request.RefreshToken);
         return Result.Ok();
     }
-
+    
     public async Task<Result> ForgotPasswordAsync(ForgotPasswordRequestDto request)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
@@ -150,14 +150,14 @@ public class AuthService : IAuthService
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null) return Error.Validation("User.NotFound", "User not found.");
-
+        
         var provider = _userManager.Options.Tokens.PasswordResetTokenProvider;
         var isValid = await _userManager.VerifyUserTokenAsync(user, provider, "ResetPassword", request.Code);
         if (!isValid) return Error.Validation("Token.Invalid", "Invalid or expired reset code.");
-
+        
         return Result.Ok();
     }
-
+    
     public async Task<Result> ChangePasswordAsync(string userEmail, ChangePasswordRequestDto passwordDTO)
     {
         if (passwordDTO.NewPassword != passwordDTO.ConfirmNewPassword)
@@ -173,7 +173,7 @@ public class AuthService : IAuthService
 
         return Result.Ok();
     }
-
+    
     public async Task<bool> EmailExistsAsync(string email)
     {
         var user = await _userManager.FindByEmailAsync(email);

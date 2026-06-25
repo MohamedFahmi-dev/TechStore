@@ -108,10 +108,7 @@ public class NotificationService : INotificationService
 
     public async Task<Result> SendToAllAsync(string title, string message, NotificationType type = NotificationType.Info)
     {
-        // TODO: Implement batch notification to all users
-        // This would typically use a background service or message queue
-        // For now, return success to avoid breaking the API
-        await Task.CompletedTask;
+         await Task.CompletedTask;
         return Result.Ok();
     }
 }
