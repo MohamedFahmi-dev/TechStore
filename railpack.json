@@ -2,6 +2,22 @@
   "$schema": "https://schema.railpack.com",
   "provider": "dotnet",
   "csproj": "TechStore.API/TechStore.API.csproj",
+  "build": {
+    "steps": [
+      {
+        "name": "restore",
+        "commands": [
+          "dotnet restore TechStore.API/TechStore.API.csproj"
+        ]
+      },
+      {
+        "name": "publish",
+        "commands": [
+          "dotnet publish TechStore.API/TechStore.API.csproj -c Release -o out --no-restore"
+        ]
+      }
+    ]
+  },
   "deploy": {
     "startCommand": "./out/TechStore.API"
   }
